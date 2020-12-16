@@ -32,7 +32,7 @@ exports.spiegelScraper = async (urls) => {
 					title,
 					published,
 					author,
-					// , script
+					// script,
 				};
 			} catch (err) {
 				// return;
@@ -42,7 +42,7 @@ exports.spiegelScraper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 
 exports.ciceroScraper = async (urls) => {
@@ -87,7 +87,7 @@ exports.ciceroScraper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 
 exports.bildScraper = async (urls) => {
@@ -125,7 +125,7 @@ exports.bildScraper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 
 exports.tichyseinblickScrapper = async (urls) => {
@@ -167,7 +167,7 @@ exports.tichyseinblickScrapper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 
 exports.jungefreiheitScrapper = async (urls) => {
@@ -216,7 +216,7 @@ exports.jungefreiheitScrapper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 
 exports.weltScrapper = async (urls) => {
@@ -255,7 +255,7 @@ exports.weltScrapper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 
 exports.sternScrapper = async (urls) => {
@@ -337,7 +337,7 @@ exports.sternScrapper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 
 exports.tagesschauScrapper = async (urls) => {
@@ -385,7 +385,7 @@ exports.tagesschauScrapper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 
 exports.handelsblattScrapper = async (urls) => {
@@ -435,7 +435,7 @@ exports.handelsblattScrapper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
 exports.allgemeineScrapper = async (urls) => {
 	const data = await Promise.all(
@@ -486,5 +486,5 @@ exports.allgemeineScrapper = async (urls) => {
 			}
 		})
 	);
-	console.log(data);
+	return data;
 };
