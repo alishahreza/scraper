@@ -30,15 +30,17 @@ exports.spiegelScraper = async (urls) => {
 				return {
 					source: 'spiegel.de',
 					title,
+					// url,
 					published,
 					author,
+					subtitle: '',
 					// script,
 				};
 			} catch (err) {
-				// return;
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -64,7 +66,7 @@ exports.ciceroScraper = async (urls) => {
 
 				const title = $('article > div.clearfix span.h1').text().trim();
 
-				const subTitle = $('article').find('p.lead').text().trim();
+				const subtitle = $('article').find('p.lead').text().trim();
 
 				$('div.field').find('.author-box').remove();
 				const script = $('article')
@@ -75,15 +77,17 @@ exports.ciceroScraper = async (urls) => {
 				return {
 					source: 'cicero.de',
 					title,
-					authorAndDate,
-					subTitle,
-					// script
+					// url,
+					published: authorAndDate,
+					author: '',
+					subtitle,
+					// script,
 				};
 			} catch (err) {
-				// return
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -97,7 +101,7 @@ exports.bildScraper = async (urls) => {
 				const { data } = await axios.get(url);
 				const $ = await cheerio.load(data);
 
-				const title = $('header h2').find('span.headline').text().trim();
+				const title = $('header').find('span.headline').text().trim();
 
 				$('div.authors').find('span.vh').remove();
 				$('div.authors').find('span.u-title-case').remove();
@@ -113,15 +117,17 @@ exports.bildScraper = async (urls) => {
 				return {
 					source: 'bild.de',
 					title,
+					// url,
 					published,
 					author,
-					// script
+					subtitle: '',
+					// script,
 				};
 			} catch (err) {
-				// return;
-				console.error(err.message); //error handling
+				console.error(err); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -135,7 +141,7 @@ exports.tichyseinblickScrapper = async (urls) => {
 				const { data } = await axios.get(url);
 				const $ = await cheerio.load(data);
 				const title = $('div h1.entry-title').text();
-				const subTitle = $('div.entry-content')
+				const subtitle = $('div.entry-content')
 					.find('.rty-article-page-excerpt')
 					.text()
 					.trim();
@@ -152,18 +158,18 @@ exports.tichyseinblickScrapper = async (urls) => {
 					.replace(/\n/g, '');
 				return {
 					source: 'tichyseinblick',
-					// url,
 					title,
+					// url,
 					published,
 					author,
-					subTitle,
+					subtitle,
 					// script,
 				};
 			} catch (err) {
-				// return;
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -202,17 +208,18 @@ exports.jungefreiheitScrapper = async (urls) => {
 				// const script = //matne khabar poli
 				return {
 					source: 'jungefreiheit',
-					url,
 					title,
+					// url,
 					published,
 					author,
+					subtitle: '',
 					// script,
 				};
 			} catch (err) {
-				// return;
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -228,7 +235,7 @@ exports.weltScrapper = async (urls) => {
 
 				const title = $('header div.c-container').find('h2.c-headline').text();
 
-				const subTitle = $('div.c-summary div[itemprop="description"]').text();
+				const subtitle = $('div.c-summary div[itemprop="description"]').text();
 
 				const published = new Date(
 					$('div.c-container').find('time').attr('datetime')
@@ -240,18 +247,18 @@ exports.weltScrapper = async (urls) => {
 				const script = $('div.c-article-text p').text();
 				return {
 					source: 'welt.de',
-					// url,
 					title,
+					// url,
 					published,
 					author,
-					subTitle,
+					subtitle,
 					// script,
 				};
 			} catch (err) {
-				// return;
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -282,7 +289,7 @@ exports.sternScrapper = async (urls) => {
 						.replace(/\s\s+/g, '')
 						.replace(/\n/g, '');
 
-				const subTitle = (
+				const subtitle = (
 					$('header div .ArticleHeader-intro').text() || $('div.intro ').text()
 				)
 					.replace(/\s\s+/g, '')
@@ -322,18 +329,18 @@ exports.sternScrapper = async (urls) => {
 
 				return {
 					source: 'stern.de',
-					// // url,
 					title,
-					subTitle,
+					// url,
 					published,
 					author,
+					subtitle,
 					// script,
 				};
 			} catch (err) {
-				// return;
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -370,18 +377,18 @@ exports.tagesschauScrapper = async (urls) => {
 
 				return {
 					source: 'tagesschau.de',
-					// // url,
 					title,
-					// subTitle,
+					// url,
 					published,
 					author,
+					subtitle: '',
 					// script,
 				};
 			} catch (err) {
-				// return;
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -420,18 +427,18 @@ exports.handelsblattScrapper = async (urls) => {
 
 				return {
 					source: 'handelsblatt.com',
-					// // url,
 					title,
-					// subTitle,
+					// url,
 					published,
 					author,
+					subtitle: '',
 					// script,
 				};
 			} catch (err) {
-				// return;
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
@@ -458,7 +465,7 @@ exports.allgemeineScrapper = async (urls) => {
 
 				$('#js-vrm-articleDetail__content').find('figure').remove();
 				$('.hide-for-large').remove();
-				const subTitle = $('article.vrm-articleDetail p')
+				const subtitle = $('article.vrm-articleDetail p')
 					.text()
 					.replace(/\s\s+/g, '')
 					.replace(/\n/g, ' ');
@@ -472,17 +479,17 @@ exports.allgemeineScrapper = async (urls) => {
 				return {
 					source: 'allgemeine-zeitung.de',
 					title,
-					subTitle,
+					// url,
 					published,
 					author,
+					subtitle,
 					// script,
-					// url,
 				};
 			} catch (err) {
-				// return;
 				console.error(err.message); //error handling
 				err.message === 'Request failed with status code 404' &&
 					console.log({ error: `${url} is not valid ... - 404` });
+				return;
 			}
 		})
 	);
