@@ -1,20 +1,76 @@
 const fs = require('fs');
-const path = require('path');
+const inquirer = require('inquirer');
 const ObjectsToCsv = require('objects-to-csv');
+const path = require('path');
 const object = require('./functions');
-const yargs = require('yargs');
 const { mainFunc, allData } = object;
 
-const toJson = async () => {
+inquirer
+	.prompt([
+		{
+			type: 'confirm',
+			name: 'toBeSaved',
+			message: 'Do you want to save the output as a file?',
+			default: false,
+		},
+	])
+	.then((answers) => {
+		if (answers.toBeSaved) {
+			inquirer.prompt(questions).then((answers) => {
+				buildConfig(answers);
+			});
+		} else {
+			console.log('Bye 🖐🏽');
+		}
+	});
+
+var questions = [
+	{
+		type: 'list',
+		name: 'fileFormat',
+		message: 'What format u want to save the file?',
+		choices: ['Csv', 'Json'],
+		filter: function (val) {
+			return val.toLowerCase();
+		},
+	},
+	{
+		type: 'input',
+		name: 'filename',
+		message: 'what is yor output file name?',
+		default: path.basename(process.cwd()),
+	},
+	{
+		type: 'input',
+		name: 'pathToSave',
+		message: 'where do u want to save the file?',
+		default: process.cwd(),
+	},
+];
+
+const buildConfig = (answers) => {
+	const { fileFormat, filename, pathToSave } = answers;
+	switch (fileFormat) {
+		case 'json':
+			toJson(filename, pathToSave);
+			break;
+		case 'csv':
+			toCsv(filename, pathToSave);
+			break;
+		default:
+			console.log('Nice To Meet You ...');
+	}
+};
+const toJson = async (filename, pathToSave) => {
 	await mainFunc();
 	try {
-		let pathJson;
-		filepath.trim() === ''
-			? (pathJson = 'data')
-			: (pathJson = filepath.split('.')[0]);
-		console.log(filepath);
+		let fileNameToSave, pathJson;
+		filename
+			? (fileNameToSave = filename)
+			: (fileNameToSave = path.basename(process.cwd()));
+		pathToSave ? (pathJson = pathToSave) : (pathJson = process.cwd());
 		await fs.writeFileSync(
-			`${pathJson}.json`,
+			`${pathJson}/${fileNameToSave}.json`,
 			JSON.stringify(allData)
 			// { flag: 'a' }
 		);
@@ -24,39 +80,20 @@ const toJson = async () => {
 	}
 };
 
-const toCsv = async () => {
+const toCsv = async (filename, pathToSave) => {
 	await mainFunc();
-	for (let i = 0; i < allData.length; i++) {
-		const csv = new ObjectsToCsv(allData[i]);
-		let pathCsv;
-		filepath.trim() === ''
-			? (pathCsv = 'data')
-			: (pathCsv = filepath.split('.')[0]);
-		await csv.toDisk(`${pathCsv}.csv`, { append: true });
+	try {
+		let fileNameToSave, pathCsv;
+		filename
+			? (fileNameToSave = filename)
+			: (fileNameToSave = path.basename(process.cwd()));
+		pathToSave ? (pathCsv = pathToSave) : (pathCsv = process.cwd());
+		for (let i = 0; i < allData.length; i++) {
+			const csv = new ObjectsToCsv(allData[i]);
+			await csv.toDisk(`${pathCsv}/${fileNameToSave}.csv`, { append: true });
+		}
+		console.log(`Csv file is created successfully`);
+	} catch (err) {
+		console.error(err);
 	}
-	console.log(`Csv file is created successfully`);
 };
-
-const { argv } = yargs
-	.command('save', 'save the file in local machine', { alias: 's' })
-	.option('path', {
-		alias: 'p',
-		demandOption: true,
-		desc: 'path to save the file',
-		default: 'data',
-	})
-	.option('format', {
-		alias: 'f',
-		demandOption: true,
-		desc: 'format to save the file',
-		choices: ['json', 'csv'],
-	});
-
-let params = yargs.argv;
-let { path: filepath, format } = params;
-
-if (format === 'json') {
-	toJson();
-} else if (format === 'csv') {
-	toCsv();
-}
